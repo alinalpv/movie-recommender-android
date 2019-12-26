@@ -6,6 +6,7 @@ import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
 import org.apache.mahout.cf.taste.impl.neighborhood.ThresholdUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
+import org.apache.mahout.cf.taste.model.PreferenceArray;
 import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.UserBasedRecommender;
@@ -17,31 +18,26 @@ import java.util.List;
 
 public class Recommender {
     private static FileDataModel model;
-
     // private static DataReader imdbIdForMovieId;
     private static UserSimilarity similarity;
     private static UserNeighborhood neighborhood;
     private static UserBasedRecommender userBasedRecommender;
-    private static Recommender recommender;
+    private static Recommender recommender = new Recommender();
     public static List<RecommendedItem> recommendedItems = new ArrayList<>();
 
-    private Recommender() {
-    }
+    private Recommender(){}
 
     public static void init(File ratingsFile) {
-        if (recommender == null) {
-            recommender = new Recommender();
-            try {
-
-                model = new FileDataModel(ratingsFile, ",");
-                //imdbIdForMovieId = new DataReader("datasets/links.csv", ",");
-                similarity = new PearsonCorrelationSimilarity(model);
-                neighborhood = new ThresholdUserNeighborhood(0.1, similarity, model);
-                userBasedRecommender = new GenericUserBasedRecommender(model, neighborhood, similarity);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            model = new FileDataModel(ratingsFile, false ,1L, ",");
+            //imdbIdForMovieId = new DataReader("datasets/links.csv", ",");
+            similarity = new PearsonCorrelationSimilarity(model);
+            neighborhood = new ThresholdUserNeighborhood(0.1, similarity, model);
+            userBasedRecommender = new GenericUserBasedRecommender(model, neighborhood, similarity);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     public static void refresh() {
@@ -51,10 +47,20 @@ public class Recommender {
     public static List<RecommendedItem> getRecommendations(Integer noItems, Long userId) {
         try {
             recommendedItems.addAll(userBasedRecommender.recommend(userId, noItems));
-            return  recommendedItems;
+            return recommendedItems;
         } catch (Exception e) {
-            Log.e("Error","failed to get recommendations for user" + e.toString());
+            Log.e("Error", "failed to get recommendations for user" + e.toString());
             return new ArrayList<>();
+        }
+
+    }
+
+    public static PreferenceArray getUserRatings(Long userId) {
+        try {
+            return model.getPreferencesFromUser(userId);
+        } catch (Exception e) {
+            Log.e("Error", "failed to get ratings for user" + e.toString());
+            throw new RuntimeException(e);
         }
 
     }

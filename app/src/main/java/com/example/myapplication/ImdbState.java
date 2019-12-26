@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import android.util.Log;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;

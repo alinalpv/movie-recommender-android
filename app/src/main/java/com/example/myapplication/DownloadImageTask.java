@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.Pair;
 
 import java.io.File;
@@ -22,20 +23,14 @@ class DownloadImageTask extends AsyncTask<Pair<Long, String>, Integer, Bitmap> {
 
     protected Bitmap doInBackground(Pair<Long, String>... urls) {
         Bitmap mIcon = null;
-        int ithPoster=1;
         for(Pair<Long, String> pair: urls) {
             Long movieId = pair.first;
             String imdbId = pair.second;
-            try {
-                InputStream in = new java.net.URL(url + imdbId).openStream();
+            try(InputStream in = new java.net.URL(url + imdbId).openStream()) {
                 mIcon = BitmapFactory.decodeStream(in);
                 saveToStorage(mIcon, Long.toString(movieId));
-
-                publishProgress(Math.round(ithPoster *100 / urls.length));
-                ithPoster++;
             } catch (Exception e) {
-                //Log.e("Error", e.printStackTrace());
-                e.printStackTrace();
+                Log.e("Error", "failed decoding bitmap " + e.toString());
             }
         }
         isTaskCompleted = true;
@@ -54,7 +49,7 @@ class DownloadImageTask extends AsyncTask<Pair<Long, String>, Integer, Bitmap> {
         try (FileOutputStream fos = new FileOutputStream(myPath)) {
            bmp.compress(Bitmap.CompressFormat.PNG, 100, fos);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("error", "failed saving picture ");
         }
     }
 }

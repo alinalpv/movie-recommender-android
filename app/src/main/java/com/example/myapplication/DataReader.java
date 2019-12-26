@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,13 +16,18 @@ public class DataReader {
     private Map<Long, String> map = new HashMap<>();
     private List<Long> movieIds;
     private boolean completed = false;
+
     public DataReader(InputStream linksStream, String separator) {
-        try (Stream<String> stream =  new BufferedReader(new InputStreamReader(linksStream)).lines()) {
+        try (Stream<String> stream = new BufferedReader(new InputStreamReader(linksStream)).lines()) {
 
             stream.map(line -> line.split(separator)).forEach(arr -> map.put(Long.parseLong(arr[0]), arr[1]));
             movieIds = new ArrayList<>(map.keySet());
+
+            linksStream.close();
+        } catch (Exception e) {
+            Log.e("error", "failed to close links stream " + e.getMessage());
         }
-        completed  = true;
+        completed = true;
     }
 
     public String get(Long id) {
@@ -29,13 +36,15 @@ public class DataReader {
 
     /**
      * *
+     *
      * @return a pair of id and imdbId
      */
     public LongStringPair next() {
         Long id = movieIds.get(ThreadLocalRandom.current().nextInt(movieIds.size()));
         return new LongStringPair(id, map.get(id));
     }
-    public boolean isCompleted(){
+
+    public boolean isCompleted() {
         return completed;
     }
 }
