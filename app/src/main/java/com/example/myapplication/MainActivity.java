@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,18 +8,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class MainActivity extends AppCompatActivity {
-    private DownloadImageTask posterDownloader;
-    private CopyRatingsTask ratingsCopyTask;
+public class MainActivity extends Activity {
+    private static DownloadImageTask posterDownloader;
+    private static CopyRatingsTask ratingsCopyTask;
     private static DataReader movies;
+    public static int fileIndex = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +45,14 @@ public class MainActivity extends AppCompatActivity {
                 File directory = getApplicationContext().getDir("ratingsDir", Context.MODE_PRIVATE);
 
                 File ratingsFile = new File(directory, "ratings.csv");
-                File ratingsUpdateFile = new File(directory, "ratings.update.csv");
+                File ratingsUpdateFile = new File(directory, "ratings." + fileIndex + ".csv");
+                fileIndex++;
                 try {
-                    Files.deleteIfExists(Paths.get(ratingsUpdateFile.getPath()));
+                    List<Path> toDelete = Files.list(Paths.get(directory.getPath())).filter(file -> file.toString().contains("rating")).collect(Collectors.toList());
+                    for(Path path: toDelete) {
+                        Files.deleteIfExists(path);
+                        Log.i("info", "deleted file "+ path);
+                    }
                 } catch (Exception e) {
                     Log.e("error", "fuck " + e);
                 }

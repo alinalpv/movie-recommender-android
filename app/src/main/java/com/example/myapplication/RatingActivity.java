@@ -1,26 +1,23 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
-public class RatingActivity extends AppCompatActivity {
+public class RatingActivity extends Activity {
     int index = 0;
-    static List<String> images = new ArrayList<>();
     int rating;
-    Pair<Long, String> pair;
+    private Pair<Long, String> pair;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +36,6 @@ public class RatingActivity extends AppCompatActivity {
 
         File myPath = new File(directory, Long.toString(pair.first));
         Bitmap myBitmap = BitmapFactory.decodeFile(myPath.getAbsolutePath());
-        // Log.i("info", "width " + myBitmap.getWidth() + "height " + myBitmap.getHeight());
 
         imageview.setImageBitmap(myBitmap);
 
@@ -56,30 +52,39 @@ public class RatingActivity extends AppCompatActivity {
     public void next(View view) {
         // Do something in response to button
         Intent intent = new Intent(this, RatingActivity.class);
+        Intent intentRecommendationActivity = new Intent(this, ProgressBarActivity.class);
+        String fileName = getIntent().getStringExtra("fileName");
+        Integer maxMovies = getIntent().getIntExtra("maxMovies", 10);
+
         index++;
 
-        if (index == 10) {
-            Intent intentRecommendationActivity = new Intent(this, ProgressBarActivity.class);
-            startActivity(intentRecommendationActivity);
-        } else {
-            if (rating == 0) {
-                rating = 1;
-            }
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    /*WriteToFileTask writeToFileTask = new WriteToFileTask("ratings.update.csv",
-                            getApplicationContext());
-                    writeToFileTask.execute("611," + pair.first + "," + rating);*/
-                    intent.putExtra("index", index);
-                   /* while(!writeToFileTask.isCompleted()){
-                    }*/
-                    Ratings.addRating("611," + pair.first + "," + rating);
+        if (rating == 0) {
+            rating = 1;
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                intent.putExtra("index", index);
+                Ratings.addRating("611," + pair.first + "," + rating);
+                Log.i("info", "added rating " + "611," + pair.first + "," + rating);
+                Log.i("info", "index  = " + index + " rated " + Ratings.getRatings().length);
+
+                if (index == maxMovies) {
+                    if(fileName != null) {
+                        intentRecommendationActivity.putExtra("fileName", fileName);
+                    }
+                    startActivity(intentRecommendationActivity);
+                } else {
+                    intent.putExtra("fileName", fileName);
+                    intent.putExtra("maxMovies", maxMovies);
+
                     startActivity(intent);
                 }
-            }).start();
+            }
+        }).start();
 
-        }
+
     }
 
     public void onSelectRating(View view) {

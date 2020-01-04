@@ -1,9 +1,7 @@
 package com.example.myapplication;
 
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Stream;
 
 public class Ratings {
     private static Set<String> ratingsUpdateSet= new TreeSet<>();

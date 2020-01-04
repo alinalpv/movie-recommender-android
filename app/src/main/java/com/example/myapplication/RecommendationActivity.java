@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,7 +19,7 @@ import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 
 import java.io.File;
 
-public class RecommendationActivity extends AppCompatActivity {
+public class RecommendationActivity extends Activity {
     int index;
 
     @Override
@@ -53,10 +55,17 @@ public class RecommendationActivity extends AppCompatActivity {
         // Do something in response to button
         Intent intent = new Intent(this, RecommendationActivity.class);
         index++;
+        Button button = findViewById(R.id.button4);
         if (index < 5) {
             intent.putExtra(  "index", index);
             startActivity(intent);
+        } else {
+            Intent intentSummary = new Intent(this, SummaryActivity.class);
+
+            button.setText("Summary");
+            startActivity(intentSummary);
         }
+
     }
 
 }

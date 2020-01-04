@@ -25,9 +25,14 @@ class WriteToFileTask extends AsyncTask<String, Void, String> {
     }
 
     protected String doInBackground(String... ratings) {
+        File directory = context.getDir("ratingsDir", Context.MODE_PRIVATE);
+        File myPath = new File(directory, fileName);
+        try {
+            Files.write(Paths.get(myPath.getPath()), "".getBytes(), StandardOpenOption.WRITE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         for(String rating: ratings) {
-            File directory = context.getDir("ratingsDir", Context.MODE_PRIVATE);
-            File myPath = new File(directory, fileName);
             try {
                 Files.write(Paths.get(myPath.getPath()),(rating + '\n').getBytes(), StandardOpenOption.APPEND);
             } catch (Exception e) {
