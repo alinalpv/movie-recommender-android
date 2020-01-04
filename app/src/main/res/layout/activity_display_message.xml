@@ -7,35 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".RatingActivity">
 
-    <RadioGroup
-        android:layout_width="0dp"
-        android:layout_height="0dp" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="99dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="98dp"
-        android:layout_marginEnd="42dp"
-        android:layout_marginRight="42dp"
-        android:layout_marginBottom="39dp"
-        android:text="Button" />
-
     <Button
         android:id="@+id/button3"
-        android:layout_width="117dp"
+        android:layout_width="286dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentRight="false"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="60dp"
-        android:layout_marginRight="60dp"
-        android:layout_marginBottom="46dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="false"
+        android:layout_marginRight="147dp"
+        android:layout_marginBottom="44dp"
         android:onClick="next"
-        android:text="Button" />
+        android:text="Rate this movie" />
 
     <ImageView
         android:id="@+id/imageView"
