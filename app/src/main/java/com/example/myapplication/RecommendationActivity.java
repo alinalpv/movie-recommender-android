@@ -35,11 +35,13 @@ public class RecommendationActivity extends Activity {
         setTitle(MainActivity.getTitleFor(item.getItemID()));
         File directory = getApplicationContext().getDir("imageDir", Context.MODE_PRIVATE);
         TextView textView = findViewById(R.id.description);
+        TextView imdbRating = findViewById(R.id.imdbRating);
         textView.setMovementMethod(new ScrollingMovementMethod());
 
         Movie movie = PlotDownloader.movies.get(item.getItemID());
         if(movie != null) {
             textView.setText(movie.getPlot());
+            imdbRating.setText(movie.getImdbRating()+"/10");
             Log.i("info", movie.toString());
         } else {
             Log.e("error", "movie not donwloaded");
