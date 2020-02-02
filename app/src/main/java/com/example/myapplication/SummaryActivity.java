@@ -38,11 +38,16 @@ public class SummaryActivity extends Activity {
 
         List<Long> recommendedItemList = Recommender.recommendedItems.stream().map(recommendedItem -> recommendedItem.getItemID()).collect(Collectors.toSet()).stream().collect(Collectors.toList());
         String[] recommended = new String[recommendedItemList.size()];
+        String[] imdbRatings = new String[recommendedItemList.size()];
         for (int i = 0; i < recommendedItemList.size(); i++) {
             recommended[i] = MainActivity.getTitleFor(recommendedItemList.get(i));
+            Movie movie = PlotDownloader.movies.get(recommendedItemList.get(i));
+
+            imdbRatings[i] = movie.getImdbRating() + "/10";
         }
-        mAdapter = new MyAdapter(recommended);
+        mAdapter = new MyAdapter(recommended, imdbRatings);
         recyclerView.setAdapter(mAdapter);
+
     }
 
     public void exit(View view) {
@@ -52,6 +57,7 @@ public class SummaryActivity extends Activity {
 
     static class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         private String[] mDataset;
+        private String[] rDataset;
 
         // Provide a reference to the views for each data item
         // Complex data items may need more than one view per item, and
@@ -59,16 +65,19 @@ public class SummaryActivity extends Activity {
         public static class MyViewHolder extends RecyclerView.ViewHolder {
             // each data item is just a string in this case
             public TextView textView;
+            public TextView ratingTextView;
 
             public MyViewHolder(View v) {
                 super(v);
                 textView = v.findViewById(R.id.myTextView);
+                ratingTextView = v.findViewById(R.id.imdbRating2);
             }
         }
 
         // Provide a suitable constructor (depends on the kind of dataset)
-        public MyAdapter(String[] myDataset) {
+        public MyAdapter(String[] myDataset, String[] ratingDataset) {
             mDataset = myDataset;
+            rDataset = ratingDataset;
         }
 
         // Create new views (invoked by the layout manager)
@@ -89,6 +98,7 @@ public class SummaryActivity extends Activity {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
             holder.textView.setText(mDataset[position]);
+            holder.ratingTextView.setText(rDataset[position]);
 
         }
 

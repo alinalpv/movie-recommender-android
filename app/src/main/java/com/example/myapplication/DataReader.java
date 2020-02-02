@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 public class DataReader {
     private Map<Long, String> map = new HashMap<>();
+    private Random random = new Random();
     private List<Long> movieIds;
     private boolean completed = false;
 
@@ -40,7 +42,7 @@ public class DataReader {
      * @return a pair of id and imdbId
      */
     public LongStringPair next() {
-        Long id = movieIds.get(ThreadLocalRandom.current().nextInt(movieIds.size()));
+        Long id = movieIds.get(random.nextInt(movieIds.size()));
         return new LongStringPair(id, map.get(id));
     }
 
